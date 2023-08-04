@@ -2,16 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Utility function to get the height of a node
-int height(struct AVLNode *node)
+// Static utility function to get the height of a node
+static int height(struct AVLNode *node)
 {
-    if (node == NULL)
-        return 0;
-    return node->height;
+    return (node == NULL) ? 0 : node->height;
 }
 
-// Utility function to get the maximum of two integers
-int max(int a, int b)
+// Static utility function to get the maximum of two integers
+static int max(int a, int b)
 {
     return (a > b) ? a : b;
 }
@@ -53,9 +51,14 @@ void destroyAVLTree(struct AVLTree *tree)
     free(tree);
 }
 
-// Function to perform a right rotation
 struct AVLNode *rightRotate(struct AVLNode *y)
 {
+    if (y == NULL || y->left == NULL)
+    {
+        // Cannot perform right rotation on a null node or a node without a left child
+        return y;
+    }
+
     struct AVLNode *x = y->left;
     struct AVLNode *T2 = x->right;
 
@@ -92,7 +95,7 @@ int getBalance(struct AVLNode *node)
 }
 
 // Function to insert a key into the AVL Tree
-struct AVLNode *insertAVLNode(struct AVLNode *node, int key)
+static struct AVLNode *insertAVLNode(struct AVLNode *node, int key)
 {
     if (node == NULL)
         return createAVLNode(key);
@@ -101,12 +104,15 @@ struct AVLNode *insertAVLNode(struct AVLNode *node, int key)
         node->left = insertAVLNode(node->left, key);
     else if (key > node->key)
         node->right = insertAVLNode(node->right, key);
-    else // Duplicate keys are not allowed in AVL tree
-        return node;
+    else // Duplicate keys are allowed in AVL tree, insert in the right subtree
+        node->right = insertAVLNode(node->right, key);
 
-    node->height = 1 + max(height(node->left), height(node->right));
+    int left_height = height(node->left);
+    int right_height = height(node->right);
 
-    int balance = getBalance(node);
+    node->height = 1 + max(left_height, right_height);
+
+    int balance = left_height - right_height;
 
     // Left-Left case
     if (balance > 1 && key < node->left->key)

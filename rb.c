@@ -166,7 +166,6 @@ void insertRB(struct RBTree *tree, int key)
 
     z->left = tree->nil;
     z->right = tree->nil;
-    z->color = RED;
 
     fixInsertRB(tree, z);
 }
