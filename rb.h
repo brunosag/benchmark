@@ -31,5 +31,9 @@ void destroyRBTree(struct RBTree *tree);
 void insertRB(struct RBTree *tree, int key);
 void deleteRB(struct RBTree *tree, int key);
 void printRB(struct RBTree *tree);
+int findMinRB(struct RBTree *tree);
+int findMaxRB(struct RBTree *tree);
+double findAverageRB(struct RBTree *tree);
+static int countRBNodes(struct RBNode *node, struct RBTree *tree);
 
 #endif /* RB_H */

@@ -1,6 +1,95 @@
 #include "rb.h"
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// Function to find the minimum value in a Red-Black Tree (interface function)
+int findMinRB(struct RBTree *tree)
+{
+    struct RBNode *node = tree->root;
+
+    if (node == tree->nil)
+        return -1;
+
+    while (node->left != tree->nil)
+        node = node->left;
+
+    return node->key;
+}
+
+// Function to find the maximum value in the RB Tree
+int findMaxRB(struct RBTree *tree)
+{
+    struct RBNode *node = tree->root;
+
+    if (node == tree->nil)
+        return 0;
+
+    while (node->right != tree->nil)
+        node = node->right;
+
+    return node->key;
+}
+
+// Helper function to calculate the sum of all nodes in a Red-Black Tree
+static int sumRBNodes(struct RBNode *node, struct RBTree *tree)
+{
+    if (node == tree->nil)
+        return 0;
+
+    return node->key + sumRBNodes(node->left, tree) + sumRBNodes(node->right, tree);
+}
+
+// Helper function to count the number of nodes in a Red-Black Tree
+static int countRBNodes(struct RBNode *node, struct RBTree *tree)
+{
+    if (node == tree->nil)
+        return 0;
+
+    return 1 + countRBNodes(node->left, tree) + countRBNodes(node->right, tree);
+}
+
+double findAverageRB(struct RBTree *tree)
+{
+    long long int sum = 0;
+    int numNodes = countRBNodes(tree->root, tree);
+
+    if (numNodes == 0)
+        return 0.0;
+
+    struct RBNode *current = tree->root;
+    struct RBNode *pre;
+
+    while (current != tree->nil)
+    {
+        if (current->left == tree->nil)
+        {
+            sum += current->key;
+            current = current->right;
+        }
+        else
+        {
+            pre = current->left;
+
+            while (pre->right != tree->nil && pre->right != current)
+                pre = pre->right;
+
+            if (pre->right == tree->nil)
+            {
+                pre->right = current;
+                current = current->left;
+            }
+            else
+            {
+                pre->right = tree->nil;
+                sum += current->key;
+                current = current->right;
+            }
+        }
+    }
+
+    return (double)sum / numNodes;
+}
 
 // Function to create a new Red-Black node
 struct RBNode *createRBNode(int key, enum Color color)

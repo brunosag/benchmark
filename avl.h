@@ -8,6 +8,7 @@ struct AVLNode
     struct AVLNode *left;
     struct AVLNode *right;
     int height;
+    int size;
 };
 
 // AVL Tree ADT
@@ -22,5 +23,9 @@ void destroyAVLTree(struct AVLTree *tree);
 void insertAVL(struct AVLTree *tree, int key);
 void deleteAVL(struct AVLTree *tree, int key);
 void printAVL(struct AVLTree *tree);
+int findMinAVL(struct AVLTree *tree);
+int findMaxAVL(struct AVLTree *tree);
+double findAverageAVL(struct AVLTree *tree);
+static int countAVLNodes(struct AVLNode *node);
 
 #endif /* AVL_H */
