@@ -1,31 +1,36 @@
 #ifndef AVL_H
 #define AVL_H
 
+// Structure to store key-frequency pairs
+typedef struct
+{
+    int key;
+    int frequency;
+} KeyFrequency;
+
 // Node structure for AVL Tree
-struct AVLNode
+typedef struct AVLNode
 {
     int key;
     struct AVLNode *left;
     struct AVLNode *right;
     int height;
     int size;
-};
+} AVLNode;
 
 // AVL Tree ADT
-struct AVLTree
+typedef struct AVLTree
 {
     struct AVLNode *root;
-};
+} AVLTree;
 
-// Function prototypes
 struct AVLTree *createAVLTree();
 void destroyAVLTree(struct AVLTree *tree);
 void insertAVL(struct AVLTree *tree, int key);
-void deleteAVL(struct AVLTree *tree, int key);
 void printAVL(struct AVLTree *tree);
 int findMinAVL(struct AVLTree *tree);
 int findMaxAVL(struct AVLTree *tree);
 double findAverageAVL(struct AVLTree *tree);
-static int countAVLNodes(struct AVLNode *node);
+KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int data_size);
 
 #endif /* AVL_H */

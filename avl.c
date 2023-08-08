@@ -1,12 +1,85 @@
 #include "avl.h"
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-// Helper function to create a new AVL node
-static struct AVLNode *createAVLNode(int key)
+#define MAX_DATA_SIZE 1000000
+
+// Helper function to find the frequency of each key in the AVL Tree
+static void findKeyFrequenciesAVL(AVLNode *node, int data_size, KeyFrequency *frequencies, int *arr_size)
 {
-    struct AVLNode *node = (struct AVLNode *)malloc(sizeof(struct AVLNode));
+    if (node != NULL)
+    {
+        findKeyFrequenciesAVL(node->left, data_size, frequencies, arr_size);
+
+        bool key_found = false;
+        for (int i = 0; i < *arr_size; i++)
+        {
+            if (frequencies[i].key == node->key)
+            {
+                frequencies[i].frequency++;
+                key_found = true;
+                break;
+            }
+        }
+        if (!key_found)
+        {
+            KeyFrequency newKey;
+            newKey.frequency = 1;
+            newKey.key = node->key;
+            frequencies[*arr_size] = newKey;
+            (*arr_size)++;
+        }
+
+        findKeyFrequenciesAVL(node->right, data_size, frequencies, arr_size);
+    }
+}
+
+// Function to find the X most frequent values in the AVL Tree
+KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int data_size)
+{
+    if (tree == NULL || X <= 0)
+    {
+        return NULL;
+    }
+
+    KeyFrequency *frequencies = calloc(data_size, sizeof(KeyFrequency));
+    KeyFrequency *result = calloc(X, sizeof(KeyFrequency));
+    int arr_size = 0;
+
+    // Find the frequency of each key in the AVL Tree
+    findKeyFrequenciesAVL(tree->root, data_size, frequencies, &arr_size);
+
+    // Find X most frequent in the frequencies array
+    for (int i = 0; i < X; i++)
+    {
+        int max_freq = 0;
+        int max_freq_index = -1;
+
+        for (int j = 0; j < arr_size; j++)
+        {
+            if (frequencies[j].frequency > max_freq)
+            {
+                max_freq = frequencies[j].frequency;
+                max_freq_index = j;
+            }
+        }
+
+        if (max_freq_index != -1)
+        {
+            result[i] = frequencies[max_freq_index];
+            frequencies[max_freq_index].frequency = 0;
+        }
+    }
+
+    return result;
+}
+
+// Helper function to create a new AVL node
+static AVLNode *createAVLNode(int key)
+{
+    AVLNode *node = (AVLNode *)malloc(sizeof(AVLNode));
     node->key = key;
     node->left = NULL;
     node->right = NULL;
@@ -16,7 +89,7 @@ static struct AVLNode *createAVLNode(int key)
 }
 
 // Helper function to update the height and size of a node
-static void updateNode(struct AVLNode *node)
+static void updateNode(AVLNode *node)
 {
     int left_height = node->left ? node->left->height : 0;
     int right_height = node->right ? node->right->height : 0;
@@ -26,13 +99,13 @@ static void updateNode(struct AVLNode *node)
 }
 
 // Helper function to perform a right rotation
-static struct AVLNode *rightRotateAVL(struct AVLNode *y)
+static AVLNode *rightRotateAVL(AVLNode *y)
 {
     if (y == NULL || y->left == NULL)
         return y;
 
-    struct AVLNode *x = y->left;
-    struct AVLNode *T2 = x->right;
+    AVLNode *x = y->left;
+    AVLNode *T2 = x->right;
 
     // Perform the rotation
     x->right = y;
@@ -46,13 +119,13 @@ static struct AVLNode *rightRotateAVL(struct AVLNode *y)
 }
 
 // Helper function to perform a left rotation
-static struct AVLNode *leftRotateAVL(struct AVLNode *x)
+static AVLNode *leftRotateAVL(AVLNode *x)
 {
     if (x == NULL || x->right == NULL)
         return x;
 
-    struct AVLNode *y = x->right;
-    struct AVLNode *T2 = y->left;
+    AVLNode *y = x->right;
+    AVLNode *T2 = y->left;
 
     // Perform the rotation
     y->left = x;
@@ -65,16 +138,8 @@ static struct AVLNode *leftRotateAVL(struct AVLNode *x)
     return y;
 }
 
-// Function to create an empty AVL Tree
-struct AVLTree *createAVLTree()
-{
-    struct AVLTree *tree = (struct AVLTree *)malloc(sizeof(struct AVLTree));
-    tree->root = NULL;
-    return tree;
-}
-
 // Helper function to insert a key into the AVL Tree
-static struct AVLNode *insertAVLNode(struct AVLNode *node, int key)
+static AVLNode *insertAVLNode(AVLNode *node, int key)
 {
     if (node == NULL)
         return createAVLNode(key);
@@ -117,14 +182,8 @@ static struct AVLNode *insertAVLNode(struct AVLNode *node, int key)
     return node;
 }
 
-// Function to insert a key into the AVL Tree (interface function)
-void insertAVL(struct AVLTree *tree, int key)
-{
-    tree->root = insertAVLNode(tree->root, key);
-}
-
 // Function to free the memory occupied by the AVL nodes
-static void destroyAVLNodes(struct AVLNode *node)
+static void destroyAVLNodes(AVLNode *node)
 {
     if (node != NULL)
     {
@@ -134,15 +193,8 @@ static void destroyAVLNodes(struct AVLNode *node)
     }
 }
 
-// Function to destroy the AVL Tree
-void destroyAVLTree(struct AVLTree *tree)
-{
-    destroyAVLNodes(tree->root);
-    free(tree);
-}
-
 // Helper function to find the minimum value in an AVL Tree
-static struct AVLNode *findMinAVLNode(struct AVLNode *node)
+static AVLNode *findMinAVLNode(AVLNode *node)
 {
     if (node == NULL)
         return NULL;
@@ -153,15 +205,8 @@ static struct AVLNode *findMinAVLNode(struct AVLNode *node)
     return node;
 }
 
-// Function to find the minimum value in the AVL Tree (interface function)
-int findMinAVL(struct AVLTree *tree)
-{
-    struct AVLNode *minNode = findMinAVLNode(tree->root);
-    return minNode ? minNode->key : INT_MIN;
-}
-
 // Helper function to find the maximum value in an AVL Tree
-static struct AVLNode *findMaxAVLNode(struct AVLNode *node)
+static AVLNode *findMaxAVLNode(AVLNode *node)
 {
     if (node == NULL)
         return NULL;
@@ -172,15 +217,8 @@ static struct AVLNode *findMaxAVLNode(struct AVLNode *node)
     return node;
 }
 
-// Function to find the maximum value in the AVL Tree (interface function)
-int findMaxAVL(struct AVLTree *tree)
-{
-    struct AVLNode *maxNode = findMaxAVLNode(tree->root);
-    return maxNode ? maxNode->key : INT_MAX;
-}
-
 // Helper function to calculate the sum of all nodes in an AVL Tree
-static int sumAVLNodes(struct AVLNode *node)
+static int sumAVLNodes(AVLNode *node)
 {
     if (node == NULL)
         return 0;
@@ -189,7 +227,7 @@ static int sumAVLNodes(struct AVLNode *node)
 }
 
 // Helper function to count the number of nodes in an AVL Tree
-static int countAVLNodes(struct AVLNode *node)
+static int countAVLNodes(AVLNode *node)
 {
     if (node == NULL)
         return 0;
@@ -197,8 +235,43 @@ static int countAVLNodes(struct AVLNode *node)
     return 1 + countAVLNodes(node->left) + countAVLNodes(node->right);
 }
 
+// Function to create an empty AVL Tree
+AVLTree *createAVLTree()
+{
+    AVLTree *tree = (AVLTree *)malloc(sizeof(AVLTree));
+    tree->root = NULL;
+    return tree;
+}
+
+// Function to insert a key into the AVL Tree
+void insertAVL(AVLTree *tree, int key)
+{
+    tree->root = insertAVLNode(tree->root, key);
+}
+
+// Function to destroy the AVL Tree
+void destroyAVLTree(AVLTree *tree)
+{
+    destroyAVLNodes(tree->root);
+    free(tree);
+}
+
+// Function to find the minimum value in the AVL Tree
+int findMinAVL(AVLTree *tree)
+{
+    AVLNode *minNode = findMinAVLNode(tree->root);
+    return minNode ? minNode->key : INT_MIN;
+}
+
+// Function to find the maximum value in the AVL Tree
+int findMaxAVL(AVLTree *tree)
+{
+    AVLNode *maxNode = findMaxAVLNode(tree->root);
+    return maxNode ? maxNode->key : INT_MAX;
+}
+
 // Function to calculate the average value in an AVL Tree
-double findAverageAVL(struct AVLTree *tree)
+double findAverageAVL(AVLTree *tree)
 {
     long long int sum = 0;
     int numNodes = countAVLNodes(tree->root);
@@ -206,8 +279,8 @@ double findAverageAVL(struct AVLTree *tree)
     if (numNodes == 0)
         return 0.0;
 
-    struct AVLNode *current = tree->root;
-    struct AVLNode *pre;
+    AVLNode *current = tree->root;
+    AVLNode *pre;
 
     while (current != NULL)
     {
@@ -241,7 +314,7 @@ double findAverageAVL(struct AVLTree *tree)
 }
 
 // Function to print the AVL Tree in-order
-static void inOrderTraversalAVL(struct AVLNode *node)
+static void inOrderTraversalAVL(AVLNode *node)
 {
     if (node != NULL)
     {
@@ -251,8 +324,8 @@ static void inOrderTraversalAVL(struct AVLNode *node)
     }
 }
 
-// Function to print the AVL Tree (interface function)
-void printAVL(struct AVLTree *tree)
+// Function to print the AVL Tree
+void printAVL(AVLTree *tree)
 {
     inOrderTraversalAVL(tree->root);
     printf("\n");
