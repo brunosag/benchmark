@@ -1,6 +1,8 @@
 #ifndef RB_H
 #define RB_H
 
+#include "common.h"
+
 // Color enumeration for Red-Black Tree nodes
 enum Color
 {
@@ -32,5 +34,6 @@ void printRB(struct RBTree *tree);
 int findMinRB(struct RBTree *tree);
 int findMaxRB(struct RBTree *tree);
 double findAverageRB(struct RBTree *tree);
+KeyFrequency *findXMostFrequentRB(RBTree *tree, int X, int data_size);
 
 #endif /* RB_H */

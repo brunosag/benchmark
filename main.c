@@ -7,7 +7,7 @@
 
 #define MAX_DATA_SIZE 1000000
 
-// Function to print the resulting array containing the X most repeated values
+// Function to print the X most repeated values in the tree
 void printMostFrequent(KeyFrequency *result, int X)
 {
     if (result == NULL)
@@ -16,35 +16,37 @@ void printMostFrequent(KeyFrequency *result, int X)
         return;
     }
 
-    printf("%d most frequent values in AVL tree: \n- ", X);
     for (int i = 0; (i < X && result[i].key != 0); i++)
     {
+        if ((i != 0) && (i % 10 == 0))
+        {
+            printf("\n\t%-22s", "");
+        }
         printf("%d(%d) ", result[i].key, result[i].frequency);
     }
-    printf("\n\n");
 }
 
-void insert_ordered_data_avl(AVLTree *avlTree, int size)
+// Function to insert ordered data in the AVL tree (1, 2, 3, ..., size)
+void insertOrderedDataAVL(AVLTree *avlTree, int size)
 {
-    // Insert ordered data (1, 2, 3, ..., size)
     for (int i = 1; i <= size; i++)
     {
         insertAVL(avlTree, i);
     }
 }
 
-void insert_ordered_data_rb(RBTree *rbTree, int size)
+// Function to insert ordered data in the Red-Black tree (1, 2, 3, ..., size)
+void insertOrderedDataRB(RBTree *rbTree, int size)
 {
-    // Insert ordered data (1, 2, 3, ..., size)
     for (int i = 1; i <= size; i++)
     {
         insertRB(rbTree, i);
     }
 }
 
-void insert_unordered_data_avl(AVLTree *avlTree, int size)
+// Function to insert unordered data in the AVL Tree (random values between 1 and size)
+void insertUnorderedDataAVL(AVLTree *avlTree, int size)
 {
-    // Insert unordered data (random values between 1 and size)
     srand(time(NULL));
     for (int i = 0; i < size; i++)
     {
@@ -53,9 +55,9 @@ void insert_unordered_data_avl(AVLTree *avlTree, int size)
     }
 }
 
-void insert_unordered_data_rb(RBTree *rbTree, int size)
+// Function to insert unordered data in the RB Tree (random values between 1 and size)
+void insertUnorderedDataRB(RBTree *rbTree, int size)
 {
-    // Insert unordered data (random values between 1 and size)
     for (int i = 0; i < size; i++)
     {
         int value = rand() % size + 1;
@@ -89,11 +91,11 @@ int main(int argc, char *argv[])
     clock_t avlStart = clock();
     if (strcmp(order_type, "ordered") == 0)
     {
-        insert_ordered_data_avl(avlTree, data_size);
+        insertOrderedDataAVL(avlTree, data_size);
     }
     else if (strcmp(order_type, "unordered") == 0)
     {
-        insert_unordered_data_avl(avlTree, data_size);
+        insertUnorderedDataAVL(avlTree, data_size);
     }
     else
     {
@@ -109,11 +111,11 @@ int main(int argc, char *argv[])
     clock_t rbStart = clock();
     if (strcmp(order_type, "ordered") == 0)
     {
-        insert_ordered_data_rb(rbTree, data_size);
+        insertOrderedDataRB(rbTree, data_size);
     }
     else if (strcmp(order_type, "unordered") == 0)
     {
-        insert_unordered_data_rb(rbTree, data_size);
+        insertUnorderedDataRB(rbTree, data_size);
     }
     else
     {
@@ -173,35 +175,55 @@ int main(int argc, char *argv[])
     clock_t avlEnd50 = clock();
     double avlTimeFrequent50 = ((double)(avlEnd50 - avlStart50)) / CLOCKS_PER_SEC;
 
-    // // Measure time for finding the 10 most frequent values in Red-Black Tree
-    // clock_t rbStart10 = clock();
-    // findXMostFrequentRB(rbTree, 10);
-    // clock_t rbEnd10 = clock();
-    // double rbTimeFrequent10 = ((double)(rbEnd10 - rbStart10)) / CLOCKS_PER_SEC;
+    // Measure time for finding the 10 most frequent values in Red-Black Tree
+    clock_t rbStart10 = clock();
+    KeyFrequency *rbMostFrequent10 = findXMostFrequentRB(rbTree, 10, data_size);
+    clock_t rbEnd10 = clock();
+    double rbTimeFrequent10 = ((double)(rbEnd10 - rbStart10)) / CLOCKS_PER_SEC;
 
-    // // Measure time for finding the 50 most frequent values in Red-Black Tree
-    // clock_t rbStart50 = clock();
-    // findXMostFrequentRB(rbTree, 50);
-    // clock_t rbEnd50 = clock();
-    // double rbTimeFrequent50 = ((double)(rbEnd50 - rbStart50)) / CLOCKS_PER_SEC;
+    // Measure time for finding the 50 most frequent values in Red-Black Tree
+    clock_t rbStart50 = clock();
+    KeyFrequency *rbMostFrequent50 = findXMostFrequentRB(rbTree, 50, data_size);
+    clock_t rbEnd50 = clock();
+    double rbTimeFrequent50 = ((double)(rbEnd50 - rbStart50)) / CLOCKS_PER_SEC;
 
-    // Display the most frequent values
+    // Ṕrint result values from the AVL Tree
+    printf("AVL Tree:\n");
+    printf("\t%-22s%d\n", "- Minimum:", avlMin);
+    printf("\t%-22s%d\n", "- Maximum:", avlMax);
+    printf("\t%-22s%.1f\n", "- Average:", avlAverage);
+    printf("\t%-22s", "- 10 most frequent:");
     printMostFrequent(avlMostFrequent10, 10);
+    printf("\n\t%-22s", "- 50 most frequent:");
     printMostFrequent(avlMostFrequent50, 50);
+    printf("\n\n");
 
-    // Display the results in table format
-    printf("%-20s | %-20s | %-20s | %-20s\n", "Operation", "AVL Tree (s)", "Red-Black Tree (s)", "AVL/RB Ratio");
-    printf("------------------------------------------------------------------------------------------\n");
-    printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Insert data", avlTimeInsertion, rbTimeInsertion,
+    // Print result values from the Red-Black Tree
+    printf("Red-Black Tree:\n");
+    printf("\t%-22s%d\n", "- Minimum:", avlMin);
+    printf("\t%-22s%d\n", "- Maximum:", avlMax);
+    printf("\t%-22s%.1f\n", "- Average:", avlAverage);
+    printf("\t%-22s", "- 10 most frequent:");
+    printMostFrequent(rbMostFrequent10, 10);
+    printf("\n\t%-22s", "- 50 most frequent:");
+    printMostFrequent(rbMostFrequent50, 50);
+    printf("\n\n");
+
+    // Print the time benchmarks in table format
+    printf("----------------------------------------------------------------------------------------------\n");
+    printf("%-24s | %-20s | %-20s | %-20s\n", "Operation", "AVL Tree (s)", "Red-Black Tree (s)", "AVL/RB Ratio");
+    printf("----------------------------------------------------------------------------------------------\n");
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Insert data", avlTimeInsertion, rbTimeInsertion,
            avlTimeInsertion / rbTimeInsertion);
-    printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Find min", avlTimeMin, rbTimeMin, avlTimeMin / rbTimeMin);
-    printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Find max", avlTimeMax, rbTimeMax, avlTimeMax / rbTimeMax);
-    printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Calculate average", avlTimeAverage, rbTimeAverage,
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Find min", avlTimeMin, rbTimeMin, avlTimeMin / rbTimeMin);
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Find max", avlTimeMax, rbTimeMax, avlTimeMax / rbTimeMax);
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Calculate average", avlTimeAverage, rbTimeAverage,
            avlTimeAverage / rbTimeAverage);
-    // printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Find 10 most frequent", avlTimeFrequent10, rbTimeFrequent10,
-    //        avlTimeFrequent10 / rbTimeFrequent10);
-    // printf("%-20s | %-20.6f | %-20.6f | %-20.2f\n", "Find 50 most frequent", avlTimeFrequent50, rbTimeFrequent50,
-    //        avlTimeFrequent50 / rbTimeFrequent50);
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Find 10 most frequent", avlTimeFrequent10, rbTimeFrequent10,
+           avlTimeFrequent10 / rbTimeFrequent10);
+    printf("%-24s | %-20.6f | %-20.6f | %-20.2f\n", "Find 50 most frequent", avlTimeFrequent50, rbTimeFrequent50,
+           avlTimeFrequent50 / rbTimeFrequent50);
+    printf("----------------------------------------------------------------------------------------------\n");
 
     // Destroy the trees to free memory
     destroyAVLTree(avlTree);

@@ -1,12 +1,7 @@
 #ifndef AVL_H
 #define AVL_H
 
-// Structure to store key-frequency pairs
-typedef struct
-{
-    int key;
-    int frequency;
-} KeyFrequency;
+#include "common.h"
 
 // Node structure for AVL Tree
 typedef struct AVLNode

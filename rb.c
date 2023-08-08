@@ -1,7 +1,78 @@
 #include "rb.h"
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// Helper function to find the frequency of each key in the RB Tree
+static void findKeyFrequenciesRB(RBNode *node, int data_size, KeyFrequency *frequencies, int *arr_size, RBTree *tree)
+{
+    if (node != tree->nil)
+    {
+        findKeyFrequenciesRB(node->left, data_size, frequencies, arr_size, tree);
+
+        bool key_found = false;
+        for (int i = 0; i < *arr_size; i++)
+        {
+            if (frequencies[i].key == node->key)
+            {
+                frequencies[i].frequency++;
+                key_found = true;
+                break;
+            }
+        }
+        if (!key_found)
+        {
+            KeyFrequency newKey;
+            newKey.frequency = 1;
+            newKey.key = node->key;
+            frequencies[*arr_size] = newKey;
+            (*arr_size)++;
+        }
+
+        findKeyFrequenciesRB(node->right, data_size, frequencies, arr_size, tree);
+    }
+}
+
+// Function to find the X most frequent values in the RB Tree
+KeyFrequency *findXMostFrequentRB(RBTree *tree, int X, int data_size)
+{
+    if (tree == NULL || X <= 0)
+    {
+        return NULL;
+    }
+
+    KeyFrequency *frequencies = calloc(data_size, sizeof(KeyFrequency));
+    KeyFrequency *result = calloc(X, sizeof(KeyFrequency));
+    int arr_size = 0;
+
+    // Find the frequency of each key in the RB Tree
+    findKeyFrequenciesRB(tree->root, data_size, frequencies, &arr_size, tree);
+
+    // Find X most frequent in the frequencies array
+    for (int i = 0; i < X; i++)
+    {
+        int max_freq = 0;
+        int max_freq_index = -1;
+
+        for (int j = 0; j < arr_size; j++)
+        {
+            if (frequencies[j].frequency > max_freq)
+            {
+                max_freq = frequencies[j].frequency;
+                max_freq_index = j;
+            }
+        }
+
+        if (max_freq_index != -1)
+        {
+            result[i] = frequencies[max_freq_index];
+            frequencies[max_freq_index].frequency = 0;
+        }
+    }
+
+    return result;
+}
 
 // Function to find the minimum value in a Red-Black Tree
 int findMinRB(RBTree *tree)
