@@ -1,7 +1,7 @@
 #ifndef AVL_H
 #define AVL_H
 
-#include "common.h"
+#include "main.h"
 
 // Node structure for AVL Tree
 typedef struct AVLNode
@@ -19,10 +19,13 @@ typedef struct AVLTree
     struct AVLNode *root;
 } AVLTree;
 
-struct AVLTree *createAVLTree();
+struct AVLTree *createAVLTree(); // Main ADT functions
 void destroyAVLTree(struct AVLTree *tree);
 void insertAVL(struct AVLTree *tree, int key);
 void printAVL(struct AVLTree *tree);
+
+void insertOrderedDataAVL(AVLTree *avlTree, int size); // Benchmark specific functions
+void insertUnorderedDataAVL(AVLTree *avlTree, int size);
 int findMinAVL(struct AVLTree *tree);
 int findMaxAVL(struct AVLTree *tree);
 double findAverageAVL(struct AVLTree *tree);

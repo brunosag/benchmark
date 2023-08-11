@@ -1,7 +1,7 @@
 #ifndef RB_H
 #define RB_H
 
-#include "common.h"
+#include "main.h"
 
 // Color enumeration for Red-Black Tree nodes
 enum Color
