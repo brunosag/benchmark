@@ -1,5 +1,5 @@
 #include "avl.h"
-#include "rb.h"
+#include "dll.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,25 +35,6 @@ void printMostFrequent(KeyFrequency *result, int X)
     }
 }
 
-// Function to insert ordered data in the Red-Black tree (1, 2, 3, ..., size)
-void insertOrderedDataRB(RBTree *rbTree, int size)
-{
-    for (int i = 1; i <= size; i++)
-    {
-        insertRB(rbTree, i);
-    }
-}
-
-// Function to insert unordered data in the RB Tree (random values between 1 and size)
-void insertUnorderedDataRB(RBTree *rbTree, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        int value = rand() % size + 1;
-        insertRB(rbTree, value);
-    }
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -74,7 +55,7 @@ int main(int argc, char *argv[])
 
     // Create the data structures
     AVLTree *avlTree = createAVLTree();
-    RBTree *rbTree = createRBTree();
+    DoublyLinkedList *doublyLinkedList = createDoublyLinkedList();
 
     // Measure time and comparison count for AVL Tree insertion
     clock_t avlStart = clock();
@@ -91,34 +72,35 @@ int main(int argc, char *argv[])
     {
         printf("Invalid order type. Please choose 'ordered' or 'unordered'.\n");
         destroyAVLTree(avlTree);
-        destroyRBTree(rbTree);
+        destroyDoublyLinkedList(doublyLinkedList);
         return 1;
     }
     clock_t avlEnd = clock();
     double avlTimeInsertion = ((double)(avlEnd - avlStart)) / CLOCKS_PER_SEC;
-    int avlCompInsertion = comparisonCount;
+    unsigned long long avlCompInsertion = comparisonCount;
     comparisonCount = 0;
 
-    // Measure time and comparison count for Red-Black Tree insertion
-    clock_t rbStart = clock();
+    // Measure time and comparison count for Doubly-Linked List insertion
+    clock_t dllStart = clock();
+    compare();
     if (strcmp(order_type, "ordered") == 0)
     {
-        insertOrderedDataRB(rbTree, data_size);
+        insertOrderedDataDLL(doublyLinkedList, data_size);
     }
     else if (strcmp(order_type, "unordered") == 0)
     {
-        insertUnorderedDataRB(rbTree, data_size);
+        insertUnorderedDataDLL(doublyLinkedList, data_size);
     }
     else
     {
         printf("Invalid order type. Please choose 'ordered' or 'unordered'.\n");
         destroyAVLTree(avlTree);
-        destroyRBTree(rbTree);
+        destroyDoublyLinkedList(doublyLinkedList);
         return 1;
     }
-    clock_t rbEnd = clock();
-    double rbTimeInsertion = ((double)(rbEnd - rbStart)) / CLOCKS_PER_SEC;
-    int rbCompInsertion = comparisonCount;
+    clock_t dllEnd = clock();
+    double dllTimeInsertion = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompInsertion = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for AVL Tree minimum search
@@ -126,15 +108,15 @@ int main(int argc, char *argv[])
     int avlMin = findMinAVL(avlTree);
     avlEnd = clock();
     double avlTimeMin = ((double)(avlEnd - avlStart)) / CLOCKS_PER_SEC;
-    int avlCompMin = comparisonCount;
+    unsigned long long avlCompMin = comparisonCount;
     comparisonCount = 0;
 
-    // Measure time and comparison count for Red-Black Tree minimum search
-    rbStart = clock();
-    int rbMin = findMinRB(rbTree);
-    rbEnd = clock();
-    double rbTimeMin = ((double)(rbEnd - rbStart)) / CLOCKS_PER_SEC;
-    int rbCompMin = comparisonCount;
+    // Measure time and comparison count for Doubly-Linked List minimum search
+    dllStart = clock();
+    int dllMin = findMinDLL(doublyLinkedList);
+    dllEnd = clock();
+    double dllTimeMin = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompMin = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for AVL Tree maximum search
@@ -142,31 +124,31 @@ int main(int argc, char *argv[])
     int avlMax = findMaxAVL(avlTree);
     avlEnd = clock();
     double avlTimeMax = ((double)(avlEnd - avlStart)) / CLOCKS_PER_SEC;
-    int avlCompMax = comparisonCount;
+    unsigned long long avlCompMax = comparisonCount;
     comparisonCount = 0;
 
-    // Measure time and comparison count for Red-Black Tree maximum search
-    rbStart = clock();
-    int rbMax = findMaxRB(rbTree);
-    rbEnd = clock();
-    double rbTimeMax = ((double)(rbEnd - rbStart)) / CLOCKS_PER_SEC;
-    int rbCompMax = comparisonCount;
+    // Measure time and comparison count for Doubly-Linked List maximum search
+    dllStart = clock();
+    int dllMax = findMaxDLL(doublyLinkedList);
+    dllEnd = clock();
+    double dllTimeMax = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompMax = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for AVL Tree average calculation
     avlStart = clock();
-    double avlAverage = findAverageAVL(avlTree);
+    double avlAverage = calculateAverageAVL(avlTree);
     avlEnd = clock();
     double avlTimeAverage = ((double)(avlEnd - avlStart)) / CLOCKS_PER_SEC;
-    int avlCompAverage = comparisonCount;
+    unsigned long long avlCompAverage = comparisonCount;
     comparisonCount = 0;
 
-    // Measure time and comparison count for Red-Black Tree average calculation
-    rbStart = clock();
-    double rbAverage = findAverageRB(rbTree);
-    rbEnd = clock();
-    double rbTimeAverage = ((double)(rbEnd - rbStart)) / CLOCKS_PER_SEC;
-    int rbCompAverage = comparisonCount;
+    // Measure time and comparison count for Doubly-Linked List average calculation
+    dllStart = clock();
+    double dllAverage = calculateAverageDLL(doublyLinkedList);
+    dllEnd = clock();
+    double dllTimeAverage = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompAverage = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for finding the 10 most frequent values in AVL Tree
@@ -174,7 +156,15 @@ int main(int argc, char *argv[])
     KeyFrequency *avlMostFrequent10 = findXMostFrequentAVL(avlTree, 10, data_size);
     clock_t avlEnd10 = clock();
     double avlTimeFrequent10 = ((double)(avlEnd10 - avlStart10)) / CLOCKS_PER_SEC;
-    int avlCompFrequent10 = comparisonCount;
+    unsigned long long avlCompFrequent10 = comparisonCount;
+    comparisonCount = 0;
+
+    // Measure time and comparison count for finding the 10 most frequent values in Doubly-Linked List
+    clock_t dllStart10 = clock();
+    KeyFrequency *dllMostFrequent10 = findXMostFrequentDLL(doublyLinkedList, 10, data_size);
+    clock_t dllEnd10 = clock();
+    double dllTimeFrequent10 = ((double)(dllEnd10 - dllStart10)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompFrequent10 = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for finding the 50 most frequent values in AVL Tree
@@ -182,30 +172,22 @@ int main(int argc, char *argv[])
     KeyFrequency *avlMostFrequent50 = findXMostFrequentAVL(avlTree, 50, data_size);
     clock_t avlEnd50 = clock();
     double avlTimeFrequent50 = ((double)(avlEnd50 - avlStart50)) / CLOCKS_PER_SEC;
-    int avlCompFrequent50 = comparisonCount;
+    unsigned long long avlCompFrequent50 = comparisonCount;
     comparisonCount = 0;
 
-    // Measure time and comparison count for finding the 10 most frequent values in Red-Black Tree
-    clock_t rbStart10 = clock();
-    KeyFrequency *rbMostFrequent10 = findXMostFrequentRB(rbTree, 10, data_size);
-    clock_t rbEnd10 = clock();
-    double rbTimeFrequent10 = ((double)(rbEnd10 - rbStart10)) / CLOCKS_PER_SEC;
-    int rbCompFrequent10 = comparisonCount;
-    comparisonCount = 0;
-
-    // Measure time and comparison count for finding the 50 most frequent values in Red-Black Tree
-    clock_t rbStart50 = clock();
-    KeyFrequency *rbMostFrequent50 = findXMostFrequentRB(rbTree, 50, data_size);
-    clock_t rbEnd50 = clock();
-    double rbTimeFrequent50 = ((double)(rbEnd50 - rbStart50)) / CLOCKS_PER_SEC;
-    int rbCompFrequent50 = comparisonCount;
+    // Measure time and comparison count for finding the 50 most frequent values in Doubly-Linked List
+    clock_t dllStart50 = clock();
+    KeyFrequency *dllMostFrequent50 = findXMostFrequentDLL(doublyLinkedList, 50, data_size);
+    clock_t dllEnd50 = clock();
+    double dllTimeFrequent50 = ((double)(dllEnd50 - dllStart50)) / CLOCKS_PER_SEC;
+    unsigned long long dllCompFrequent50 = comparisonCount;
     comparisonCount = 0;
 
     // Print header
     printf("\n");
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("| %-93s |\n", "");
-    printf("| %-21sPerformance Comparison: AVL Tree vs. Red-Black Tree%-21s |\n", "", "");
+    printf("| %-19sPerformance Comparison: AVL Tree vs. Doubly-Linked List%-19s |\n", "", "");
     printf("| %-93s |\n", "");
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("\nData set: %d %s elements\n\n", data_size, order_type);
@@ -221,54 +203,56 @@ int main(int argc, char *argv[])
     printMostFrequent(avlMostFrequent50, 50);
     printf("\n\n");
 
-    // Print result values from the Red-Black Tree
-    printf("Red-Black Tree:\n");
-    printf("%-25s%d\n", "  - Minimum:", rbMin);
-    printf("%-25s%d\n", "  - Maximum:", rbMax);
-    printf("%-25s%.1f\n", "  - Average:", rbAverage);
+    // Print result values from the Doubly-Linked List
+    printf("Doubly-Linked List:\n");
+    printf("%-25s%d\n", "  - Minimum:", dllMin);
+    printf("%-25s%d\n", "  - Maximum:", dllMax);
+    printf("%-25s%.1f\n", "  - Average:", dllAverage);
     printf("%-25s", "  - 10 most frequent:");
-    printMostFrequent(rbMostFrequent10, 10);
+    printMostFrequent(dllMostFrequent10, 10);
     printf("\n%-25s", "  - 50 most frequent:");
-    printMostFrequent(rbMostFrequent50, 50);
+    printMostFrequent(dllMostFrequent50, 50);
     printf("\n\n");
 
     // Print time benchmarks in table format
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("| %-37sExecution Time (s)%-38s |\n", "", "");
     printf("|-----------------------------------------------------------------------------------------------|\n");
-    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Red-Black Tree", "AVL/RB Ratio");
+    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Doubly-Linked List", "AVL/DLL Ratio");
     printf("|-----------------------------------------------------------------------------------------------|\n");
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Insert data", avlTimeInsertion, rbTimeInsertion,
-           avlTimeInsertion / rbTimeInsertion);
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find min", avlTimeMin, rbTimeMin, avlTimeMin / rbTimeMin);
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find max", avlTimeMax, rbTimeMax, avlTimeMax / rbTimeMax);
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Calculate average", avlTimeAverage, rbTimeAverage,
-           avlTimeAverage / rbTimeAverage);
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find 10 most frequent", avlTimeFrequent10, rbTimeFrequent10,
-           avlTimeFrequent10 / rbTimeFrequent10);
-    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find 50 most frequent", avlTimeFrequent50, rbTimeFrequent50,
-           avlTimeFrequent50 / rbTimeFrequent50);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Insert data", avlTimeInsertion, dllTimeInsertion,
+           avlTimeInsertion / dllTimeInsertion);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find min", avlTimeMin, dllTimeMin, avlTimeMin / dllTimeMin);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find max", avlTimeMax, dllTimeMax, avlTimeMax / dllTimeMax);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Calculate average", avlTimeAverage, dllTimeAverage,
+           avlTimeAverage / dllTimeAverage);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find 10 most frequent", avlTimeFrequent10, dllTimeFrequent10,
+           avlTimeFrequent10 / dllTimeFrequent10);
+    printf("| %-24s | %-20.6f | %-20.6f | %-20.2f |\n", "Find 50 most frequent", avlTimeFrequent50, dllTimeFrequent50,
+           avlTimeFrequent50 / dllTimeFrequent50);
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("\n");
 
     // Print comparison benchmarks in table format
-    printf("+-----------------------------------------------------------------------------------------------+\n");
-    printf("| %-36sNumber of Comparisons%-36s |\n", "", "");
-    printf("|-----------------------------------------------------------------------------------------------|\n");
-    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Red-Black Tree", "AVL/RB Ratio");
-    printf("|-----------------------------------------------------------------------------------------------|\n");
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Insert data", avlCompInsertion, 0, 0);
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Find min", avlCompMin, 0, 0);
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Find max", avlCompMax, 0, 0);
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Calculate average", avlCompAverage, 0, 0);
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Find 10 most frequent", avlCompFrequent10, 0, 0);
-    printf("| %-24s | %-20i | %-20i | %-20i |\n", "Find 50 most frequent", avlCompFrequent50, 0, 0);
-    printf("+-----------------------------------------------------------------------------------------------+\n");
-    printf("\n");
+    //    printf("+-----------------------------------------------------------------------------------------------+\n");
+    //    printf("| %-36sNumber of Comparisons%-36s |\n", "", "");
+    //    printf("|-----------------------------------------------------------------------------------------------|\n");
+    //    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Doubly-Linked List", "AVL/DLL Ratio");
+    //    printf("|-----------------------------------------------------------------------------------------------|\n");
+    //    printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Insert data", avlCompInsertion, dllCompInsertion,
+    //    (avlCompInsertion / dllCompInsertion)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find min",
+    //    avlCompMin, dllCompMin, (avlCompMin / dllCompMin)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find
+    //    max", avlCompMax, dllCompMax, (avlCompMax / dllCompMax)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n",
+    //    "Calculate average", avlCompAverage, dllCompAverage, (avlCompAverage/ dllCompAverage)); printf("| %-24s |
+    //    %-20llu | %-20llu | %-20llu |\n", "Find 10 most frequent", avlCompFrequent10, dllCompFrequent10,
+    //    (avlCompFrequent10 / dllCompFrequent10)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find 50 most
+    //    frequent", avlCompFrequent50, dllCompFrequent50, (avlCompFrequent50 / dllCompFrequent50));
+    //    printf("+-----------------------------------------------------------------------------------------------+\n");
+    //    printf("\n");
 
     // Destroy the trees to free memory
     destroyAVLTree(avlTree);
-    destroyRBTree(rbTree);
+    destroyDoublyLinkedList(doublyLinkedList);
 
     return 0;
 }

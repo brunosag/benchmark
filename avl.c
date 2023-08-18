@@ -341,7 +341,7 @@ int findMaxAVL(AVLTree *tree)
 }
 
 // Function to calculate the average value in an AVL Tree
-double findAverageAVL(AVLTree *tree)
+double calculateAverageAVL(AVLTree *tree)
 {
     long long int sum = 0;
     int numNodes = countAVLNodes(tree->root);
