@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_DATA_SIZE 1000000
+#define MAX_DATASIZE 1000000
 
 // Global variable to count comparisons
 unsigned long long comparisonCount = 0;
@@ -39,17 +39,17 @@ int main(int argc, char *argv[])
 {
     if (argc != 3)
     {
-        printf("Usage: %s <ordered/unordered> <data_size>\n", argv[0]);
+        printf("Usage: %s <ordered/unordered> <dataSize>\n", argv[0]);
         return 1;
     }
 
     // Parse command-line arguments
-    char *order_type = argv[1];
-    int data_size = atoi(argv[2]);
+    char *orderType = argv[1];
+    int dataSize = atoi(argv[2]);
 
-    if (data_size <= 0 || data_size > MAX_DATA_SIZE)
+    if (dataSize <= 0 || dataSize > MAX_DATASIZE)
     {
-        printf("Invalid data size. Please provide a value between 1 and %d.\n", MAX_DATA_SIZE);
+        printf("Invalid data size. Please provide a value between 1 and %d.\n", MAX_DATASIZE);
         return 1;
     }
 
@@ -60,13 +60,13 @@ int main(int argc, char *argv[])
     // Measure time and comparison count for AVL Tree insertion
     clock_t avlStart = clock();
     compare();
-    if (strcmp(order_type, "ordered") == 0)
+    if (strcmp(orderType, "ordered") == 0)
     {
-        insertOrderedDataAVL(avlTree, data_size);
+        insertOrderedDataAVL(avlTree, dataSize);
     }
-    else if (strcmp(order_type, "unordered") == 0)
+    else if (strcmp(orderType, "unordered") == 0)
     {
-        insertUnorderedDataAVL(avlTree, data_size);
+        insertUnorderedDataAVL(avlTree, dataSize);
     }
     else
     {
@@ -83,13 +83,13 @@ int main(int argc, char *argv[])
     // Measure time and comparison count for Doubly-Linked List insertion
     clock_t dllStart = clock();
     compare();
-    if (strcmp(order_type, "ordered") == 0)
+    if (strcmp(orderType, "ordered") == 0)
     {
-        insertOrderedDataDLL(doublyLinkedList, data_size);
+        insertOrderedDataDLL(doublyLinkedList, dataSize);
     }
-    else if (strcmp(order_type, "unordered") == 0)
+    else if (strcmp(orderType, "unordered") == 0)
     {
-        insertUnorderedDataDLL(doublyLinkedList, data_size);
+        insertUnorderedDataDLL(doublyLinkedList, dataSize);
     }
     else
     {
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for finding the 10 most frequent values in AVL Tree
     clock_t avlStart10 = clock();
-    KeyFrequency *avlMostFrequent10 = findXMostFrequentAVL(avlTree, 10, data_size);
+    KeyFrequency *avlMostFrequent10 = findXMostFrequentAVL(avlTree, 10, dataSize);
     clock_t avlEnd10 = clock();
     double avlTimeFrequent10 = ((double)(avlEnd10 - avlStart10)) / CLOCKS_PER_SEC;
     unsigned long long avlCompFrequent10 = comparisonCount;
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for finding the 10 most frequent values in Doubly-Linked List
     clock_t dllStart10 = clock();
-    KeyFrequency *dllMostFrequent10 = findXMostFrequentDLL(doublyLinkedList, 10, data_size);
+    KeyFrequency *dllMostFrequent10 = findXMostFrequentDLL(doublyLinkedList, 10, dataSize);
     clock_t dllEnd10 = clock();
     double dllTimeFrequent10 = ((double)(dllEnd10 - dllStart10)) / CLOCKS_PER_SEC;
     unsigned long long dllCompFrequent10 = comparisonCount;
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for finding the 50 most frequent values in AVL Tree
     clock_t avlStart50 = clock();
-    KeyFrequency *avlMostFrequent50 = findXMostFrequentAVL(avlTree, 50, data_size);
+    KeyFrequency *avlMostFrequent50 = findXMostFrequentAVL(avlTree, 50, dataSize);
     clock_t avlEnd50 = clock();
     double avlTimeFrequent50 = ((double)(avlEnd50 - avlStart50)) / CLOCKS_PER_SEC;
     unsigned long long avlCompFrequent50 = comparisonCount;
@@ -177,11 +177,19 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for finding the 50 most frequent values in Doubly-Linked List
     clock_t dllStart50 = clock();
-    KeyFrequency *dllMostFrequent50 = findXMostFrequentDLL(doublyLinkedList, 50, data_size);
+    KeyFrequency *dllMostFrequent50 = findXMostFrequentDLL(doublyLinkedList, 50, dataSize);
     clock_t dllEnd50 = clock();
     double dllTimeFrequent50 = ((double)(dllEnd50 - dllStart50)) / CLOCKS_PER_SEC;
     unsigned long long dllCompFrequent50 = comparisonCount;
     comparisonCount = 0;
+
+    // Calculate duplicate percentage in AVL Tree
+    int avlDuplicates = countDuplicatesAVL(avlTree, dataSize);
+    float avlDupPercent = ((float)avlDuplicates / (float)dataSize) * 100;
+
+    // Calculate duplicate percentage in Doubly-Linked List
+    // int dllDuplicates = countDuplicatesDLL();
+    // float dllDupPercent = (dllDuplicates / dataSize) * 100;
 
     // Print header
     printf("\n");
@@ -190,7 +198,7 @@ int main(int argc, char *argv[])
     printf("| %-19sPerformance Comparison: AVL Tree vs. Doubly-Linked List%-19s |\n", "", "");
     printf("| %-93s |\n", "");
     printf("+-----------------------------------------------------------------------------------------------+\n");
-    printf("\nData set: %d %s elements\n\n", data_size, order_type);
+    printf("\nData set: %d %s elements\n\n", dataSize, orderType);
 
     // Ṕrint result values from the AVL Tree
     printf("AVL Tree:\n");
@@ -201,6 +209,7 @@ int main(int argc, char *argv[])
     printMostFrequent(avlMostFrequent10, 10);
     printf("\n%-25s", "  - 50 most frequent:");
     printMostFrequent(avlMostFrequent50, 50);
+    printf("\n%-25s%.2f%%\n", "  - Duplicate %:", avlDupPercent);
     printf("\n\n");
 
     // Print result values from the Doubly-Linked List
@@ -212,6 +221,7 @@ int main(int argc, char *argv[])
     printMostFrequent(dllMostFrequent10, 10);
     printf("\n%-25s", "  - 50 most frequent:");
     printMostFrequent(dllMostFrequent50, 50);
+    // printf("%-25s%.2f%%\n", "  - Duplicate %%:", dllDupPercent);
     printf("\n\n");
 
     // Print time benchmarks in table format

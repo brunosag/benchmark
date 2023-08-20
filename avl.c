@@ -5,15 +5,23 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_DATA_SIZE 1000000
+#define MAX_DATASIZE 1000000
+
+// Function to create an empty AVL Tree
+AVLTree *createAVLTree()
+{
+    AVLTree *tree = (AVLTree *)malloc(sizeof(AVLTree));
+    tree->root = NULL;
+    return tree;
+}
 
 // Helper function to find the frequency of each key in the AVL Tree
-static void findKeyFrequenciesAVL(AVLNode *node, int data_size, KeyFrequency *frequencies, int *arr_size)
+static void findKeyFrequenciesAVL(AVLNode *node, int dataSize, KeyFrequency *frequencies, int *arr_size)
 {
     compare();
     if (node != NULL)
     {
-        findKeyFrequenciesAVL(node->left, data_size, frequencies, arr_size);
+        findKeyFrequenciesAVL(node->left, dataSize, frequencies, arr_size);
 
         bool key_found = false;
         compare();
@@ -37,12 +45,12 @@ static void findKeyFrequenciesAVL(AVLNode *node, int data_size, KeyFrequency *fr
             (*arr_size)++;
         }
 
-        findKeyFrequenciesAVL(node->right, data_size, frequencies, arr_size);
+        findKeyFrequenciesAVL(node->right, dataSize, frequencies, arr_size);
     }
 }
 
 // Function to find the X most frequent values in the AVL Tree
-KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int data_size)
+KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int dataSize)
 {
     compare();
     if (tree == NULL || X <= 0)
@@ -50,12 +58,12 @@ KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int data_size)
         return NULL;
     }
 
-    KeyFrequency *frequencies = calloc(data_size, sizeof(KeyFrequency));
+    KeyFrequency *frequencies = calloc(dataSize, sizeof(KeyFrequency));
     KeyFrequency *result = calloc(X, sizeof(KeyFrequency));
     int arr_size = 0;
 
     // Find the frequency of each key in the AVL Tree
-    findKeyFrequenciesAVL(tree->root, data_size, frequencies, &arr_size);
+    findKeyFrequenciesAVL(tree->root, dataSize, frequencies, &arr_size);
 
     // Find X most frequent in the frequencies array
     compare();
@@ -260,15 +268,6 @@ static AVLNode *findMaxAVLNode(AVLNode *node)
     return node;
 }
 
-// Helper function to calculate the sum of all nodes in an AVL Tree
-static int sumAVLNodes(AVLNode *node)
-{
-    if (node == NULL)
-        return 0;
-
-    return node->key + sumAVLNodes(node->left) + sumAVLNodes(node->right);
-}
-
 // Helper function to count the number of nodes in an AVL Tree
 static int countAVLNodes(AVLNode *node)
 {
@@ -277,14 +276,6 @@ static int countAVLNodes(AVLNode *node)
         return 0;
 
     return 1 + countAVLNodes(node->left) + countAVLNodes(node->right);
-}
-
-// Function to create an empty AVL Tree
-AVLTree *createAVLTree()
-{
-    AVLTree *tree = (AVLTree *)malloc(sizeof(AVLTree));
-    tree->root = NULL;
-    return tree;
 }
 
 // Function to insert a key into the AVL Tree
@@ -407,4 +398,48 @@ void printAVL(AVLTree *tree)
 {
     inOrderTraversalAVL(tree->root);
     printf("\n");
+}
+
+bool valueExists(int value, int *array, int arr_size)
+{
+    for (int i = 0; i < arr_size; i++)
+    {
+        if (array[i] == value)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+int countDuplicatesAVLNode(AVLNode *node, int *seenKeys, int nSeen)
+{
+    if (node != NULL)
+    {
+        int count = 0;
+        count += countDuplicatesAVLNode(node->left, seenKeys, nSeen);
+        if (valueExists(node->key, seenKeys, nSeen))
+        {
+            count++;
+        }
+        else
+        {
+            seenKeys[nSeen] = node->key;
+            nSeen++;
+        }
+        count += countDuplicatesAVLNode(node->right, seenKeys, nSeen);
+        return count;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int countDuplicatesAVL(AVLTree *tree, int data_size)
+{
+    int *seenKeys = calloc(data_size, sizeof(int));
+    int nSeen = 0;
+
+    return countDuplicatesAVLNode(tree->root, seenKeys, nSeen);
 }

@@ -1,2 +1,2 @@
-- 10% repeated values for unordered and ordered data_sets
-- 
+- add duplicate percentage counting
+- add comparison counting for DLL

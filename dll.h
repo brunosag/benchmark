@@ -20,17 +20,15 @@ typedef struct DoublyLinkedList
 
 DoublyLinkedList *createDoublyLinkedList(); // Main ADT functions
 void destroyDoublyLinkedList(DoublyLinkedList *list);
-void pushFrontDLL(DoublyLinkedList *list, int data);
-void pushBackDLL(DoublyLinkedList *list, int data);
-void insertAfterDLL(DoublyLinkedList *list, DLLNode *prevNode, int data);
-void deleteNodeDLL(DoublyLinkedList *list, DLLNode *node);
-void printListDLL(DoublyLinkedList *list);
+void pushDLL(DoublyLinkedList *list, int key);
+void insertAfterDLL(DoublyLinkedList *list, DLLNode *prevNode, int key);
+void printDLL(DoublyLinkedList *list);
 
-void insertOrderedDataDLL(DoublyLinkedList *list, int data_size); // Benchmark specific functions
-void insertUnorderedDataDLL(DoublyLinkedList *list, int data_size);
+void insertOrderedDataDLL(DoublyLinkedList *list, int dataSize); // Benchmark specific functions
+void insertUnorderedDataDLL(DoublyLinkedList *list, int dataSize);
 int findMinDLL(DoublyLinkedList *list);
 int findMaxDLL(DoublyLinkedList *list);
 float calculateAverageDLL(DoublyLinkedList *list);
-KeyFrequency *findXMostFrequentDLL(DoublyLinkedList *list, int X, int data_size);
+KeyFrequency *findXMostFrequentDLL(DoublyLinkedList *list, int X, int dataSize);
 
 #endif /* DLL_H */

@@ -54,3 +54,6 @@ dkms.conf
 
 # VSCode files
 .vscode/
+
+# TODO list
+todo.txt

@@ -23,26 +23,7 @@ void destroyDoublyLinkedList(DoublyLinkedList *list)
     free(list);
 }
 
-void pushFrontDLL(DoublyLinkedList *list, int key)
-{
-    DLLNode *newNode = (DLLNode *)malloc(sizeof(DLLNode));
-    newNode->key = key;
-    newNode->prev = NULL;
-    newNode->next = list->head;
-
-    if (list->head != NULL)
-    {
-        list->head->prev = newNode;
-    }
-    else
-    {
-        list->tail = newNode;
-    }
-
-    list->head = newNode;
-}
-
-void pushBackDLL(DoublyLinkedList *list, int key)
+void pushDLL(DoublyLinkedList *list, int key)
 {
     DLLNode *newNode = (DLLNode *)malloc(sizeof(DLLNode));
     newNode->key = key;
@@ -88,7 +69,7 @@ void insertAfterDLL(DoublyLinkedList *list, DLLNode *prevNode, int key)
     prevNode->next = newNode;
 }
 
-void deleteNodeDLL(DoublyLinkedList *list, DLLNode *node)
+void deleteDLL(DoublyLinkedList *list, DLLNode *node)
 {
     if (node == NULL)
     {
@@ -117,7 +98,8 @@ void deleteNodeDLL(DoublyLinkedList *list, DLLNode *node)
     free(node);
 }
 
-void printListDLL(DoublyLinkedList *list)
+// Function to print the Doubly-Linked List
+void printDLL(DoublyLinkedList *list)
 {
     DLLNode *current = list->head;
     while (current != NULL)
@@ -128,10 +110,10 @@ void printListDLL(DoublyLinkedList *list)
     printf("\n");
 }
 
-// Function to insert ordered data in the Doubly-Linked List (1, 2, 3, ..., size)
-void insertOrderedDataDLL(DoublyLinkedList *list, int size)
+// Function to insert ordered data in the Doubly-Linked List (1, 2, 3, ..., dataSize)
+void insertOrderedDataDLL(DoublyLinkedList *list, int dataSize)
 {
-    for (int i = 1; i <= size; i++)
+    for (int i = 1; i <= dataSize; i++)
     {
         DLLNode *current = list->head;
         while (current != NULL && current->key < i)
@@ -141,7 +123,7 @@ void insertOrderedDataDLL(DoublyLinkedList *list, int size)
 
         if (current == NULL)
         {
-            pushBackDLL(list, i);
+            pushDLL(list, i);
         }
         else
         {
@@ -150,13 +132,13 @@ void insertOrderedDataDLL(DoublyLinkedList *list, int size)
     }
 }
 
-// Function to insert unordered data in the Doubly-Linked List (random values between 1 and size)
-void insertUnorderedDataDLL(DoublyLinkedList *list, int size)
+// Function to insert unordered data in the Doubly-Linked List (random values between 1 and dataSize)
+void insertUnorderedDataDLL(DoublyLinkedList *list, int dataSize)
 {
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < dataSize; i++)
     {
-        int randomValue = rand() % size + 1;
-        pushBackDLL(list, randomValue);
+        int randomValue = rand() % dataSize + 1;
+        pushDLL(list, randomValue);
     }
 }
 
@@ -230,14 +212,14 @@ float calculateAverageDLL(DoublyLinkedList *list)
 }
 
 // Function to find the X most frequent values in the Doubly-Linked List
-KeyFrequency *findXMostFrequentDLL(DoublyLinkedList *list, int X, int data_size)
+KeyFrequency *findXMostFrequentDLL(DoublyLinkedList *list, int X, int dataSize)
 {
     if (list->head == NULL || X <= 0)
     {
         return NULL;
     }
 
-    KeyFrequency *frequencies = calloc(data_size, sizeof(KeyFrequency));
+    KeyFrequency *frequencies = calloc(dataSize, sizeof(KeyFrequency));
     KeyFrequency *result = calloc(X, sizeof(KeyFrequency));
     int frequencies_size = 0;
 
