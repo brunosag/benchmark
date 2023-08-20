@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     int dllMax = findMaxDLL(doublyLinkedList);
     dllEnd = clock();
     double dllTimeMax = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
-    // unsigned long long dllCompMax = comparisonCount;
+    unsigned long long dllCompMax = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for AVL Tree average calculation
@@ -249,21 +249,25 @@ int main(int argc, char *argv[])
     printf("\n");
 
     // Print the comparison benchmarks in table format
-    //    printf("+-----------------------------------------------------------------------------------------------+\n");
-    //    printf("| %-36sNumber of Comparisons%-36s |\n", "", "");
-    //    printf("|-----------------------------------------------------------------------------------------------|\n");
-    //    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Doubly-Linked List", "AVL/DLL Ratio");
-    //    printf("|-----------------------------------------------------------------------------------------------|\n");
-    //    printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Insert data", avlCompInsertion, dllCompInsertion,
-    //    (avlCompInsertion / dllCompInsertion)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find min",
-    //    avlCompMin, dllCompMin, (avlCompMin / dllCompMin)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find
-    //    max", avlCompMax, dllCompMax, (avlCompMax / dllCompMax)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n",
-    //    "Calculate average", avlCompAverage, dllCompAverage, (avlCompAverage/ dllCompAverage)); printf("| %-24s |
-    //    %-20llu | %-20llu | %-20llu |\n", "Find 10 most frequent", avlCompFrequent10, dllCompFrequent10,
-    //    (avlCompFrequent10 / dllCompFrequent10)); printf("| %-24s | %-20llu | %-20llu | %-20llu |\n", "Find 50 most
-    //    frequent", avlCompFrequent50, dllCompFrequent50, (avlCompFrequent50 / dllCompFrequent50));
-    //    printf("+-----------------------------------------------------------------------------------------------+\n");
-    //    printf("\n");
+    printf("+-----------------------------------------------------------------------------------------------+\n");
+    printf("| %-36sNumber of Comparisons%-36s |\n", "", "");
+    printf("|-----------------------------------------------------------------------------------------------|\n");
+    printf("| %-24s | %-20s | %-20s | %-20s |\n", "Operation", "AVL Tree", "Doubly-Linked List", "AVL/DLL Ratio");
+    printf("|-----------------------------------------------------------------------------------------------|\n");
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Insert data", avlCompInsertion, dllCompInsertion,
+           (avlCompInsertion / (long double)dllCompInsertion));
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Find min", avlCompMin, dllCompMin,
+           (avlCompMin / (long double)dllCompMin) < 0.005 ? 0.01 : (avlCompMin / (long double)dllCompMin));
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Find max ", avlCompMax, dllCompMax,
+           (avlCompMin / (long double)dllCompMin) < 0.005 ? 0.01 : (avlCompMin / (long double)dllCompMin));
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Calculate average", avlCompAverage, dllCompAverage,
+           (avlCompAverage / (long double)dllCompAverage));
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Find 10 most frequent ", avlCompFrequent10, dllCompFrequent10,
+           (avlCompFrequent10 / (long double)dllCompFrequent10));
+    printf("| %-24s | %-20lli | %-20lli | %-20.2Lf |\n", "Find 50 most frequent", avlCompFrequent50, dllCompFrequent50,
+           (avlCompFrequent50 / (long double)dllCompFrequent50));
+    printf("+-----------------------------------------------------------------------------------------------+\n");
+    printf("\n");
 
     // Destroy the data structures to free memory
     destroyAVLTree(avlTree);

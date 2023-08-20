@@ -16,18 +16,19 @@ typedef struct AVLNode
 // AVL Tree ADT
 typedef struct AVLTree
 {
-    struct AVLNode *root;
+    AVLNode *root;
 } AVLTree;
 
-struct AVLTree *createAVLTree(); // Main ADT functions
+struct AVLTree *createAVLTree(); // Core ADT Functions
 void destroyAVLTree(struct AVLTree *tree);
 void insertAVL(struct AVLTree *tree, int key);
 void printAVL(struct AVLTree *tree);
 
-void insertDataAVL(AVLTree *tree, int *dataset, int dataSize); // Benchmark specific functions
-int findMinAVL(struct AVLTree *tree);
+int findMinAVL(struct AVLTree *tree); // Statistical Functions
 int findMaxAVL(struct AVLTree *tree);
 double calculateAverageAVL(struct AVLTree *tree);
 KeyFrequency *findXMostFrequentAVL(AVLTree *tree, int X, int dataSize);
+
+void insertDataAVL(AVLTree *tree, int *dataset, int dataSize); // Data Management Functions
 
 #endif /* AVL_H */
