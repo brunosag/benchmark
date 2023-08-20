@@ -23,7 +23,7 @@ void destroyDoublyLinkedList(DoublyLinkedList *list)
     free(list);
 }
 
-void pushDLL(DoublyLinkedList *list, int key)
+void insertDLL(DoublyLinkedList *list, int key)
 {
     DLLNode *newNode = (DLLNode *)malloc(sizeof(DLLNode));
     newNode->key = key;
@@ -40,33 +40,6 @@ void pushDLL(DoublyLinkedList *list, int key)
     }
 
     list->tail = newNode;
-}
-
-void insertAfterDLL(DoublyLinkedList *list, DLLNode *prevNode, int key)
-{
-    if (prevNode == NULL)
-    {
-        printf("Previous node cannot be NULL.");
-        return;
-    }
-
-    DLLNode *newNode = (DLLNode *)malloc(sizeof(DLLNode));
-    newNode->key = key;
-    newNode->prev = prevNode;
-    newNode->next = prevNode->next;
-
-    if (prevNode->next != NULL)
-    {
-        prevNode->next->prev = newNode;
-    }
-    else
-    {
-        list->tail = newNode;
-    }
-
-    prevNode->next = newNode;
-
-    prevNode->next = newNode;
 }
 
 void deleteDLL(DoublyLinkedList *list, DLLNode *node)
@@ -110,35 +83,12 @@ void printDLL(DoublyLinkedList *list)
     printf("\n");
 }
 
-// Function to insert ordered data in the Doubly-Linked List (1, 2, 3, ..., dataSize)
-void insertOrderedDataDLL(DoublyLinkedList *list, int dataSize)
-{
-    for (int i = 1; i <= dataSize; i++)
-    {
-        DLLNode *current = list->head;
-        while (current != NULL && current->key < i)
-        {
-            current = current->next;
-        }
-
-        if (current == NULL)
-        {
-            pushDLL(list, i);
-        }
-        else
-        {
-            insertAfterDLL(list, current->prev, i);
-        }
-    }
-}
-
-// Function to insert unordered data in the Doubly-Linked List (random values between 1 and dataSize)
-void insertUnorderedDataDLL(DoublyLinkedList *list, int dataSize)
+// Function to insert data from the dataset into the AVL Tree
+void insertDataDLL(DoublyLinkedList *list, int *dataset, int dataSize)
 {
     for (int i = 0; i < dataSize; i++)
     {
-        int randomValue = rand() % dataSize + 1;
-        pushDLL(list, randomValue);
+        insertDLL(list, dataset[i]);
     }
 }
 

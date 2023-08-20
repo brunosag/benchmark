@@ -1,2 +1,0 @@
-- add duplicate percentage counting
-- add comparison counting for DLL

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_DATASIZE 1000000
+#define MAX_DATASIZE 100000
 
 // Global variable to count comparisons
 unsigned long long comparisonCount = 0;
@@ -21,7 +21,7 @@ void printMostFrequent(KeyFrequency *result, int X)
 {
     if (result == NULL)
     {
-        printf("Invalid input or X is zero.\n");
+        printf("Invalid input.\n");
         return;
     }
 
@@ -33,6 +33,43 @@ void printMostFrequent(KeyFrequency *result, int X)
         }
         printf("%d(%d) ", result[i].key, result[i].frequency);
     }
+}
+
+// Helper function to perform bubble sort on array
+void bubbleSort(int *array, int arrSize)
+{
+    for (int i = 0; i < arrSize - 1; i++)
+    {
+        for (int j = 0; j < arrSize - i - 1; j++)
+        {
+            if (array[j] > array[j + 1])
+            {
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Function to generate an ordered or unordered dataset
+int *generateData(const char *orderType, int dataSize)
+{
+    int *dataset = malloc(dataSize * sizeof(int));
+
+    srand(time(NULL));
+    for (int i = 0; i < dataSize; i++)
+    {
+        int value = rand() % dataSize + 1;
+        dataset[i] = value;
+    }
+
+    if (strcmp(orderType, "ordered") == 0)
+    {
+        bubbleSort(dataset, dataSize);
+    }
+
+    return dataset;
 }
 
 int main(int argc, char *argv[])
@@ -52,6 +89,14 @@ int main(int argc, char *argv[])
         printf("Invalid data size. Please provide a value between 1 and %d.\n", MAX_DATASIZE);
         return 1;
     }
+    if (!(strcmp(orderType, "ordered") == 0 || strcmp(orderType, "unordered") == 0))
+    {
+        printf("Invalid order type. Please choose 'ordered' or 'unordered'.\n");
+        return 1;
+    }
+
+    // Generate the dataset
+    int *dataset = generateData(orderType, dataSize);
 
     // Create the data structures
     AVLTree *avlTree = createAVLTree();
@@ -59,22 +104,7 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for AVL Tree insertion
     clock_t avlStart = clock();
-    compare();
-    if (strcmp(orderType, "ordered") == 0)
-    {
-        insertOrderedDataAVL(avlTree, dataSize);
-    }
-    else if (strcmp(orderType, "unordered") == 0)
-    {
-        insertUnorderedDataAVL(avlTree, dataSize);
-    }
-    else
-    {
-        printf("Invalid order type. Please choose 'ordered' or 'unordered'.\n");
-        destroyAVLTree(avlTree);
-        destroyDoublyLinkedList(doublyLinkedList);
-        return 1;
-    }
+    insertDataAVL(avlTree, dataset, dataSize);
     clock_t avlEnd = clock();
     double avlTimeInsertion = ((double)(avlEnd - avlStart)) / CLOCKS_PER_SEC;
     unsigned long long avlCompInsertion = comparisonCount;
@@ -82,22 +112,7 @@ int main(int argc, char *argv[])
 
     // Measure time and comparison count for Doubly-Linked List insertion
     clock_t dllStart = clock();
-    compare();
-    if (strcmp(orderType, "ordered") == 0)
-    {
-        insertOrderedDataDLL(doublyLinkedList, dataSize);
-    }
-    else if (strcmp(orderType, "unordered") == 0)
-    {
-        insertUnorderedDataDLL(doublyLinkedList, dataSize);
-    }
-    else
-    {
-        printf("Invalid order type. Please choose 'ordered' or 'unordered'.\n");
-        destroyAVLTree(avlTree);
-        destroyDoublyLinkedList(doublyLinkedList);
-        return 1;
-    }
+    insertDataDLL(doublyLinkedList, dataset, dataSize);
     clock_t dllEnd = clock();
     double dllTimeInsertion = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
     unsigned long long dllCompInsertion = comparisonCount;
@@ -132,7 +147,7 @@ int main(int argc, char *argv[])
     int dllMax = findMaxDLL(doublyLinkedList);
     dllEnd = clock();
     double dllTimeMax = ((double)(dllEnd - dllStart)) / CLOCKS_PER_SEC;
-    unsigned long long dllCompMax = comparisonCount;
+    // unsigned long long dllCompMax = comparisonCount;
     comparisonCount = 0;
 
     // Measure time and comparison count for AVL Tree average calculation
@@ -183,24 +198,16 @@ int main(int argc, char *argv[])
     unsigned long long dllCompFrequent50 = comparisonCount;
     comparisonCount = 0;
 
-    // Calculate duplicate percentage in AVL Tree
-    int avlDuplicates = countDuplicatesAVL(avlTree, dataSize);
-    float avlDupPercent = ((float)avlDuplicates / (float)dataSize) * 100;
-
-    // Calculate duplicate percentage in Doubly-Linked List
-    // int dllDuplicates = countDuplicatesDLL();
-    // float dllDupPercent = (dllDuplicates / dataSize) * 100;
-
-    // Print header
+    // Print the header
     printf("\n");
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("| %-93s |\n", "");
     printf("| %-19sPerformance Comparison: AVL Tree vs. Doubly-Linked List%-19s |\n", "", "");
     printf("| %-93s |\n", "");
     printf("+-----------------------------------------------------------------------------------------------+\n");
-    printf("\nData set: %d %s elements\n\n", dataSize, orderType);
+    printf("\nDataset: %d %s elements\n\n", dataSize, orderType);
 
-    // Ṕrint result values from the AVL Tree
+    // Ṕrint the result values from the AVL Tree
     printf("AVL Tree:\n");
     printf("%-25s%d\n", "  - Minimum:", avlMin);
     printf("%-25s%d\n", "  - Maximum:", avlMax);
@@ -209,10 +216,9 @@ int main(int argc, char *argv[])
     printMostFrequent(avlMostFrequent10, 10);
     printf("\n%-25s", "  - 50 most frequent:");
     printMostFrequent(avlMostFrequent50, 50);
-    printf("\n%-25s%.2f%%\n", "  - Duplicate %:", avlDupPercent);
     printf("\n\n");
 
-    // Print result values from the Doubly-Linked List
+    // Print the result values from the Doubly-Linked List
     printf("Doubly-Linked List:\n");
     printf("%-25s%d\n", "  - Minimum:", dllMin);
     printf("%-25s%d\n", "  - Maximum:", dllMax);
@@ -221,10 +227,9 @@ int main(int argc, char *argv[])
     printMostFrequent(dllMostFrequent10, 10);
     printf("\n%-25s", "  - 50 most frequent:");
     printMostFrequent(dllMostFrequent50, 50);
-    // printf("%-25s%.2f%%\n", "  - Duplicate %%:", dllDupPercent);
     printf("\n\n");
 
-    // Print time benchmarks in table format
+    // Print the time benchmarks in table format
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("| %-37sExecution Time (s)%-38s |\n", "", "");
     printf("|-----------------------------------------------------------------------------------------------|\n");
@@ -243,7 +248,7 @@ int main(int argc, char *argv[])
     printf("+-----------------------------------------------------------------------------------------------+\n");
     printf("\n");
 
-    // Print comparison benchmarks in table format
+    // Print the comparison benchmarks in table format
     //    printf("+-----------------------------------------------------------------------------------------------+\n");
     //    printf("| %-36sNumber of Comparisons%-36s |\n", "", "");
     //    printf("|-----------------------------------------------------------------------------------------------|\n");
@@ -260,7 +265,7 @@ int main(int argc, char *argv[])
     //    printf("+-----------------------------------------------------------------------------------------------+\n");
     //    printf("\n");
 
-    // Destroy the trees to free memory
+    // Destroy the data structures to free memory
     destroyAVLTree(avlTree);
     destroyDoublyLinkedList(doublyLinkedList);
 

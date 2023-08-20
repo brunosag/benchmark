@@ -20,12 +20,10 @@ typedef struct DoublyLinkedList
 
 DoublyLinkedList *createDoublyLinkedList(); // Main ADT functions
 void destroyDoublyLinkedList(DoublyLinkedList *list);
-void pushDLL(DoublyLinkedList *list, int key);
-void insertAfterDLL(DoublyLinkedList *list, DLLNode *prevNode, int key);
+void insertDLL(DoublyLinkedList *list, int key);
 void printDLL(DoublyLinkedList *list);
 
-void insertOrderedDataDLL(DoublyLinkedList *list, int dataSize); // Benchmark specific functions
-void insertUnorderedDataDLL(DoublyLinkedList *list, int dataSize);
+void insertDataDLL(DoublyLinkedList *list, int *dataset, int dataSize); // Benchmark specific functions
 int findMinDLL(DoublyLinkedList *list);
 int findMaxDLL(DoublyLinkedList *list);
 float calculateAverageDLL(DoublyLinkedList *list);
